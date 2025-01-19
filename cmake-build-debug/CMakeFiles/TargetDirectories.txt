@@ -1,0 +1,3 @@
+C:/Users/caioc/Projetos/CPP/pca_app/cmake-build-debug/CMakeFiles/pca_app.dir
+C:/Users/caioc/Projetos/CPP/pca_app/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/caioc/Projetos/CPP/pca_app/cmake-build-debug/CMakeFiles/rebuild_cache.dir
