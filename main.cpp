@@ -12,6 +12,23 @@
  * ter que implementar isso do zero (Não tenho tanto tempo assim =D).
  */
 
+/**
+ * @brief Função criada para centralizar os dados da matriz em torno das médias em cada coluna.
+ * @param matriz A matriz que terá seus dados centralizados.
+ */
+Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd matriz) {
+
+    Eigen::VectorXd medias = matriz.colwise().mean();
+    Eigen::MatrixXd C (matriz.rows(), matriz.cols());
+
+    for (Eigen::Index i = 0; i < matriz.rows(); ++i) {
+        for (Eigen::Index j = 0; j < matriz.cols(); ++j) {
+            C(i,j) = matriz(i,j) - medias(j);
+        }
+    };
+    return C;
+};
+
 int main() {
 
     /*
@@ -72,7 +89,6 @@ int main() {
             }
         }
     }
-
     return 0;
 }
 
