@@ -16,7 +16,7 @@
  * @brief Função criada para centralizar os dados da matriz em torno das médias em cada coluna.
  * @param matriz A matriz que terá seus dados centralizados.
  */
-Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd matriz) {
+Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd &matriz) {
 
     Eigen::VectorXd medias = matriz.colwise().mean();
     Eigen::MatrixXd C (matriz.rows(), matriz.cols());
@@ -27,6 +27,30 @@ Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd matriz) {
         }
     };
     return C;
+};
+
+
+/**
+ * @brief Função criada para calcular a matriz de covariância de uma matriz com dimensões (mxn).
+ * @param matrizCentralizada Matriz com os dados centralizados em torno da média.
+ * @return Uma matriz de covariância com dimensão (nxn).
+ */
+Eigen::MatrixXd matrizCov(Eigen::MatrixXd &matrizCentralizada) {
+
+    int m = matrizCentralizada.rows();
+    Eigen::MatrixXd C =  (matrizCentralizada.transpose() * matrizCentralizada) / (m-1);
+    return C;
+};
+
+/**
+ * @brief Realiza o cálculo de autovetores e autovalores de uma matrix de covariância.
+ * @param matrizCov Matriz de covariância com dimensões nxn.
+ * @return Uma matriz com os autovetores e autovalores, que podem ser acessados com os métodos: .eigenvalues() e
+ * .eigenvectors().
+ */
+Eigen::EigenSolver<Eigen::MatrixXd> autoDecomposicao(const Eigen::MatrixXd &matrizCov) {
+    Eigen::EigenSolver<Eigen::MatrixXd> solver(matrizCov);
+    return solver;
 };
 
 int main() {
