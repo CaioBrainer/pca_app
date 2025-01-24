@@ -6,7 +6,8 @@
 #include <limits>
 #include <Eigen/Dense>
 
-/*Tô afim de implementar um PCA no C++, então... Vou ir fazendo aos poucos enquanto reviso programação em C++.
+/*
+ *Tô afim de implementar um PCA no C++, então... Vou ir fazendo aos poucos enquanto reviso programação em C++.
  * Inicialmente criei uma estrutura básica e uma classe simples para poder realizar a leitura e escrita de arquivos
  * em CSV. Agora irei revisar os aspectos relacionados à algebra linear e ver as bibliotecas que posso utilizar para não
  * ter que implementar isso do zero (Não tenho tanto tempo assim =D).
@@ -28,7 +29,6 @@ Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd &matriz) {
     };
     return C;
 };
-
 
 /**
  * @brief Função criada para calcular a matriz de covariância de uma matriz com dimensões (mxn).
@@ -72,7 +72,8 @@ int main() {
         std::cout << "*******************************************************************" << "\n";
         std::cout << "1 - Ler arquivo CSV" << "\n";
         std::cout << "2 - Ver arquivo CSV" << "\n";
-        std::cout << "3 - Sair do aplicativo" << "\n";
+        std::cout << "3 - Realizar PCA" << "\n";
+        std::cout << "5 - Sair do aplicativo" << "\n";
         std::cout << "*******************************************************************" << "\n";
         std::cout << "digite a opcao desejada:";
         std::cin >> opcao;
@@ -103,9 +104,25 @@ int main() {
                 }
 
                 case 3: {
+                    Eigen::MatrixXd M = csv::paraMatriz(dados);
+                    auto M_centralizada = centralizaDadosMatriz(M);
+                    auto M_covariancia = matrizCov(M_centralizada);
+                    auto M_decomposicao = autoDecomposicao(M_covariancia);
+                    std::cout << M_decomposicao.eigenvectors().real() << std::endl;
+
+                    break;
+                }
+
+                case 4: {
                     running = false;
                     break;
                 }
+
+                case 5: {
+                    running = false;
+                    break;
+                }
+
 
                 default: {
                     std::cout << "Opcao invalida" << "\n";

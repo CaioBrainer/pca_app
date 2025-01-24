@@ -8,6 +8,8 @@
 #include <fstream>
 #include <string>
 #include "dadosTabulares.h"
+#include <Eigen/Dense>
+
 
 dadosTabulares csv::lerArquivo(const std::string &fileName) {
     std::ifstream arquivo(fileName);
@@ -87,3 +89,18 @@ void csv::visualizarArquivo(const dadosTabulares &dadosTabulares) {
     }
 }
 
+Eigen::MatrixXd csv::paraMatriz(const dadosTabulares &dadosTabulares) {
+
+    size_t linhas {dadosTabulares.dadosNumericos.size()};
+    size_t colunas {dadosTabulares.dadosNumericos.at(0).size()};
+    Eigen::MatrixXd matriz (linhas, colunas);
+
+    for (Eigen::Index i = 0; i < linhas; i++) {
+        for (Eigen::Index j = 0; j < colunas; j++) {
+            matriz(i,j) = dadosTabulares.dadosNumericos.at(i)[j];
+        }
+    }
+
+
+    return matriz;
+}
