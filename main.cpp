@@ -37,7 +37,7 @@ Eigen::MatrixXd centralizaDadosMatriz(Eigen::MatrixXd &matriz) {
  */
 Eigen::MatrixXd matrizCov(Eigen::MatrixXd &matrizCentralizada) {
 
-    int m = matrizCentralizada.rows();
+    const int m = matrizCentralizada.rows();
     Eigen::MatrixXd C =  (matrizCentralizada.transpose() * matrizCentralizada) / (m-1);
     return C;
 };
@@ -52,6 +52,49 @@ Eigen::EigenSolver<Eigen::MatrixXd> autoDecomposicao(const Eigen::MatrixXd &matr
     Eigen::EigenSolver<Eigen::MatrixXd> solver(matrizCov);
     return solver;
 };
+
+/**
+ *
+ * @param autoValVec Matriz decomposta em autovetores e autovalores
+ * @return Matriz de autovetores ordenada conforme os autovalores mais importantes.
+ */
+Eigen::MatrixXd vetoresImportantes(const Eigen::EigenSolver<Eigen::MatrixXd> &autoValVec) {
+
+
+    // Vetor de autovalores
+    std::vector<std::pair<double, int>> autovaloresIndices;
+    for (int i = 0; i < autoValVec.eigenvalues().real().size(); ++i) {
+        autovaloresIndices.emplace_back(autoValVec.eigenvalues().real()(i), i);
+    };
+    std::ranges::sort(autovaloresIndices, std::ranges::greater()); // Aqui vai ordenar o bicho
+
+    // Matriz de autovetores
+    Eigen::MatrixXd matrizOrdenada {autoValVec.eigenvectors().rows(), autoValVec.eigenvectors().cols()};
+
+    // for (Eigen::Index i = 0; i < autoValVec.eigenvectors().rows(); i++) {
+    //     for (Eigen::Index j = 0; j < autovaloresIndices.size(); j++) {
+    //         matrizOrdenada(i, j) = autoValVec.eigenvectors().real()(i,autovaloresIndices.at(j).second);
+    //     };
+    // };
+
+    for (Eigen::Index j = 0; j < autovaloresIndices.size(); j++) {
+        matrizOrdenada.col(j) = autoValVec.eigenvectors().real().col(autovaloresIndices.at(j).second);
+    };
+
+    return matrizOrdenada;
+};
+
+// Partes que serão utilizadas para criar a função que ordena os autovalores e autovetores.
+
+// std::vector<std::pair<double, int>> autovaloresIndices;
+// for (int i = 0; i < E.eigenvalues().real().size(); ++i) {
+//     autovaloresIndices.emplace_back(E.eigenvalues().real()(i), i);
+// };
+//
+// std::ranges::sort(autovaloresIndices, std::ranges::greater());
+// for (const auto &[valor, chave]:autovaloresIndices) {
+//     std::cout << valor << " - " << chave << "\n";
+// };
 
 int main() {
 
