@@ -63,13 +63,6 @@ dadosTabulares csv::lerArquivo(const std::string &fileName) {
         dadosTabulares.dadosNumericos.push_back(dadosLinha);
     }
 
-    // dadosTabulares dadosTabulares;
-    // dadosTabulares.cabecalho = std::move(cabecalho);
-    // dadosTabulares.dadosNumericos = std::move(dadosNumericos);
-    // dadosTabulares.inserirCabecalho(cabecalho);
-    // dadosTabulares.inserirDados(dadosNumericos);
-
-
     return dadosTabulares;
 
 
@@ -101,6 +94,142 @@ Eigen::MatrixXd csv::paraMatriz(const dadosTabulares &dadosTabulares) {
         }
     }
 
-
     return matriz;
 }
+
+void csv::salvarArquivo(const dadosTabulares &dadosTabulares) {
+    std::string nomeArquivo;
+    std::cout << "Digite o nome do arquivo que deseja salvar: ";
+    std::cin >> nomeArquivo;
+
+    std::ofstream arquivoSaida{"../" + nomeArquivo + ".csv"};
+
+    if (arquivoSaida.is_open()) {
+        const size_t totalColunas = dadosTabulares.cabecalho.size();
+        size_t colunaAtual = 0;
+
+        for (const auto &coluna : dadosTabulares.cabecalho) {
+            arquivoSaida << coluna;
+            // Aqui que ele coloca a vírgula após cada coluna
+            if (++colunaAtual < totalColunas) {
+                arquivoSaida << ",";
+            }
+        }
+        std::cout << "\n";
+
+
+        for (const auto &vetor : dadosTabulares.dadosNumericos) {
+            colunaAtual = 0;
+            for (const auto &dado : vetor) {
+                arquivoSaida << dado;
+                if (++colunaAtual < totalColunas) {
+                    arquivoSaida << ",";
+                }
+            }
+            arquivoSaida << "\n";
+        }
+
+    } else {
+        std::cerr << "Erro ao escrever no arquivo: " << nomeArquivo << "\n";
+        return;
+    }
+
+    arquivoSaida.close();
+    std::cout << "Arquivo salvo com sucesso: " << nomeArquivo << ".csv\n";
+}
+
+// Overloading da função
+void csv::salvarArquivo(const dadosTabulares &dadosTabulares, const Eigen::MatrixXd &matrizPCA) {
+    std::string nomeArquivo;
+    std::cout << "Digite o nome do arquivo para salvar o resultado do PCA: ";
+    std::cin >> nomeArquivo;
+
+    std::ofstream arquivoSaida{"../" + nomeArquivo + ".csv"};
+
+    try {
+        if (arquivoSaida.is_open()) {
+            const size_t totalColunas = matrizPCA.cols();
+            size_t colunaAtual = 0;
+
+            for (const auto &coluna : dadosTabulares.cabecalho) {
+                arquivoSaida << coluna;
+                // Aqui que ele coloca a vírgula após cada coluna
+                if (++colunaAtual < totalColunas) {
+                    arquivoSaida << ",";
+                }
+            }
+            arquivoSaida << "\n"; //Quebra de linha do cabeçalho
+
+            for (Eigen::Index i = 0; i < matrizPCA.rows(); i++) {
+                colunaAtual = 0;
+                for (Eigen::Index j = 0; j < matrizPCA.cols(); j++) {
+                    arquivoSaida << matrizPCA(i, j);
+                    // Aqui que ele coloca a vírgula após cada coluna
+                    if (++colunaAtual < totalColunas) {
+                        arquivoSaida << ",";
+                    }
+                }
+                arquivoSaida << "\n";
+            }
+
+        } else {
+            std::cerr << "Erro ao salvar arquivo: " << nomeArquivo << "\n";
+            return;
+        }
+    }
+
+    catch (...) {
+        std::cerr << "Erro desconhecido ocorreu.\n";
+    }
+
+    arquivoSaida.close();
+}
+
+void csv::salvarArquivo(const Eigen::MatrixXd &matrizPCA) {
+    std::string nomeArquivo;
+    std::cout << "Digite o nome do arquivo para salvar o resultado do PCA: ";
+    std::cin >> nomeArquivo;
+
+    std::ofstream arquivoSaida{"../" + nomeArquivo + ".csv"};
+
+    try {
+        if (arquivoSaida.is_open()) {
+            const size_t totalColunas = matrizPCA.cols();
+            size_t colunaAtual = 0;
+
+            for (Eigen::Index i = 0; i < totalColunas; i++) {
+                std::string coluna = "PC" + std::to_string(i);
+                arquivoSaida << coluna;
+                // Aqui que ele coloca a vírgula após cada coluna
+                if (++colunaAtual < totalColunas) {
+                    arquivoSaida << ",";
+                }
+            }
+            arquivoSaida << "\n"; //Quebra de linha do cabeçalho
+
+            for (Eigen::Index i = 0; i < matrizPCA.rows(); i++) {
+                colunaAtual = 0;
+                for (Eigen::Index j = 0; j < matrizPCA.cols(); j++) {
+                    arquivoSaida << matrizPCA(i, j);
+                    // Aqui que ele coloca a vírgula após cada coluna
+                    if (++colunaAtual < totalColunas) {
+                        arquivoSaida << ",";
+                    }
+                }
+                arquivoSaida << "\n";
+            }
+
+        } else {
+            std::cerr << "Erro ao salvar arquivo: " << nomeArquivo << "\n";
+            return;
+        }
+    }
+
+    catch (...) {
+        std::cerr << "Erro desconhecido ocorreu.\n";
+    }
+
+    arquivoSaida.close();
+}
+
+

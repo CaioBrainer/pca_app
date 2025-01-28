@@ -7,7 +7,6 @@
 
 #include <string>
 #include <Eigen/Dense>
-
 #include "dadosTabulares.h"
 
 // incluir cabeçalho do struct que vou criar e trocar o tipo do método estático
@@ -18,10 +17,9 @@ class csv {
     static dadosTabulares lerArquivo(const std::string &fileName);
     static void visualizarArquivo(const dadosTabulares &dadosTabulares);
     static Eigen::MatrixXd paraMatriz(const dadosTabulares &dadosTabulares);
-    //std::vector<std::vector<float>> escreverArquivo(); ~para implementar posteriormente
-  // private:
-  //   std::vector<std::string> cabecalho;
-  //   std::vector<std::vector<float>> dadosNumericos;
+    static void salvarArquivo(const dadosTabulares &dadosTabulares);
+    static void salvarArquivo(const Eigen::MatrixXd &matrizPCA);
+    static void salvarArquivo(const dadosTabulares &dadosTabulares, const Eigen::MatrixXd &matrizPCA);
 };
 
 
