@@ -1,6 +1,0 @@
-# ninja log v6
-2016	2323	7590305524257718	app.exe	fe6db36977d38b2e
-3	349	7590313453490139	build.ninja	cc2f4acf3d3c0ac9
-8	1528	7590314616488444	CMakeFiles/pca_app.dir/csv.cpp.obj	c08de02fbc03f74f
-7	1983	7590314799947533	CMakeFiles/pca_app.dir/main.cpp.obj	1ad72bd82173873d
-1986	2208	7590314819746516	pca_app.exe	a589fa6772a2eadf
