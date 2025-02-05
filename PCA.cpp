@@ -9,17 +9,37 @@ PCA::PCA() {
 
 };
 
-void PCA::centralizaDadosMatriz(const Eigen::MatrixXd &matriz) {
+void PCA::centralizaDadosMatriz(const Eigen::MatrixXd &matriz, std::string metodo) {
+    if (metodo == "mediaCentro") {
+        Eigen::VectorXd medias = matriz.colwise().mean();
+        this->matrizCentralizada.resize(matriz.rows(), matriz.cols());
 
-    Eigen::VectorXd medias = matriz.colwise().mean();
-    this->matrizCentralizada.resize(matriz.rows(), matriz.cols());
+        for (Eigen::Index i = 0; i < matriz.rows(); ++i) {
+            for (Eigen::Index j = 0; j < matriz.cols(); ++j) {
+                this->matrizCentralizada(i,j) = matriz(i,j) - medias(j);
+            }
+        };
+    }
 
-    for (Eigen::Index i = 0; i < matriz.rows(); ++i) {
-        for (Eigen::Index j = 0; j < matriz.cols(); ++j) {
-            this->matrizCentralizada(i,j) = matriz(i,j) - medias(j);
+    if (metodo == "zScore") {
+        int rows = matriz.rows();
+        int cols = matriz.cols();
+
+        this->matrizCentralizada.resize(matriz.rows(), matriz.cols());
+
+        for (int j = 0; j < cols; ++j) {
+            double mean = matriz.col(j).mean();  // Média de cada coluna da matriz
+            double stddev = sqrt((matriz.col(j).array() - mean).square().sum() / (rows - 1)); // Desvio padrão
+
+            if (stddev != 0) {
+                this->matrizCentralizada.col(j) = (matriz.col(j).array() - mean) / stddev;
+            } else {
+                this->matrizCentralizada.col(j).setZero(); // Se o desvio padrão for zero, a coluna vira zero
+            }
         }
-    };
+    }
 };
+
 
 void PCA::matrizCov() {
     const int m = this->matrizCentralizada.rows();

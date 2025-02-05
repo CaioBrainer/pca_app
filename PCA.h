@@ -12,7 +12,7 @@
 class PCA {
 public:
     PCA();
-    void centralizaDadosMatriz(const Eigen::MatrixXd &matriz);
+    void centralizaDadosMatriz(const Eigen::MatrixXd &matriz, std::string metodo="zScore");
     void matrizCov();
     void autoDecomposicao();
     void vetoresImportantes();
