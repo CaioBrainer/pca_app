@@ -9,8 +9,6 @@
 #include <Eigen/Dense>
 #include "dadosTabulares.h"
 
-// incluir cabeçalho do struct que vou criar e trocar o tipo do método estático
-
 class csv {
   public:
     // Métodos estáticos pertencem à classe, e não às instâncias definidas por ela

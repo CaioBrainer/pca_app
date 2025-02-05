@@ -12,10 +12,11 @@
 
 
 dadosTabulares csv::lerArquivo(const std::string &fileName) {
-    std::ifstream arquivo(fileName);
+    std::string caminho {fileName + ".csv"};
 
+    std::ifstream arquivo(caminho);
     if (!arquivo.is_open()) {
-        std::cerr << "Erro ao abrir o arquivo: " << fileName << "\n";
+        std::cout << "Erro ao abrir o arquivo: " << caminho << "\n";
     }
 
 
@@ -198,7 +199,7 @@ void csv::salvarArquivo(const Eigen::MatrixXd &matrizPCA) {
             size_t colunaAtual = 0;
 
             for (Eigen::Index i = 0; i < totalColunas; i++) {
-                std::string coluna = "PC" + std::to_string(i);
+                std::string coluna = "PC" + std::to_string(i+1);
                 arquivoSaida << coluna;
                 // Aqui que ele coloca a vírgula após cada coluna
                 if (++colunaAtual < totalColunas) {
