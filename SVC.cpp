@@ -1,59 +1,86 @@
 //
-// Created by caiobrainer on 01/02/25.
+// Created by caiobrainer on 04/02/25.
 //
 
 #include "SVC.h"
-
-#include <Eigen/Dense>
+#include "svm.h"
+#include "Eigen/Dense"
 #include <iostream>
 
-void SVC::treino(const Eigen::MatrixXd &matrizDados, const Eigen::VectorXd &vetorRotulos,
-    const double &valorRegularizacao, double taxaAprendizado) {
+void SVC::treinoSVC(const Eigen::MatrixXd &matrizAtributos, Eigen::VectorXd &vetorRotulos) {
 
-    int linhas = matrizDados.rows();
-    int colunas = matrizDados.cols();
+    int numAmostras = matrizAtributos.rows();
+    int numAtributos = matrizAtributos.cols();
 
-    this->pesos = Eigen::VectorXd::Zero(colunas);
-    this->iteracoes = 1000;
-    this->vies = 0;
+    // Criando estruturas do LIBSVM
+    struct svm_problem prob;
+    struct svm_parameter param;
+    struct svm_model* model;
+    struct svm_node* x_space = new svm_node[numAmostras * (numAtributos + 1)];
 
-    for (int i = 0; i < iteracoes; i++) {
-        for (int j = 0; j < linhas; j++) {
-            double condicao = vetorRotulos(i) * matrizDados.row(i) * this->pesos + vies;
-            if (condicao >= 1) {
-                this->pesos = this->pesos - (taxaAprendizado * 2 * this->pesos); // poderia ser -= também
-            } else {
-                this->pesos = taxaAprendizado * (2 * this->pesos - valorRegularizacao * vetorRotulos(i) * matrizDados.row(i).transpose());
-                this->vies =taxaAprendizado * (-valorRegularizacao * vetorRotulos(i));
-            }
+    prob.l = numAmostras;
+    prob.y = vetorRotulos.data(); // Usando os dados do Eigen
+    prob.x = new svm_node*[numAmostras];
+
+    // Convertendo os dados do Eigen para o formato LIBSVM
+    for (int i = 0; i < numAmostras; i++) {
+        prob.x[i] = &x_space[i * (numAtributos + 1)];
+        for (int j = 0; j < numAtributos; j++) {
+            x_space[i * (numAtributos + 1) + j].index = j + 1;
+            x_space[i * (numAtributos + 1) + j].value = matrizAtributos(i, j);
+        }
+        x_space[i * (numAtributos + 1) + numAtributos].index = -1; // Fim da amostra
+    }
+
+    // Configurando os parâmetros do SVM
+    param.svm_type = C_SVC;
+    param.kernel_type = LINEAR;
+    param.C = 1.0;
+    param.gamma = 0; // Ignorado para kernel linear
+    param.cache_size = 10; // Corrigindo erro de cache_size <= 0
+    param.eps = 1e-3;
+    param.shrinking = 1;
+    param.probability = 0;
+    param.nr_weight = 0;
+    param.weight_label = NULL;
+    param.weight = NULL;
+
+    // Verificar se os parâmetros são válidos
+    const char *error_msg = svm_check_parameter(&prob, &param);
+    if (error_msg) {
+        std::cerr << "Erro nos parâmetros: " << error_msg << std::endl;
+        return;
+    }
+
+    // Treinar o modelo
+    this->model = svm_train(&prob, &param);
+    // Pesose viés
+    double *alpha = this->model->sv_coef[0];
+    svm_node **SVs = this->model->SV;
+
+    // Pesos
+    this->pesos.resize(numAtributos);
+    this->pesos.setZero(); // Inicializa w com zeros
+    // Realizando o cálculo dos pesos:
+    for (int i = 0; i < this->model->l; i++) { // model->l é o número de SVs
+        double coeff = alpha[i]; // Coeficiente do vetor de suporte
+        int j = 0;
+        while (SVs[i][j].index != -1) { // Percorre os atributos do SV
+            this->pesos(SVs[i][j].index - 1) += coeff * SVs[i][j].value;
+            j++;
         }
     }
-};
 
-std::vector<int> SVC::previsao(const Eigen::MatrixXd &matrizDados) {
-    std::vector<int> resultados;
-
-    for (Eigen::Index i = 0 ; i < matrizDados.rows(); i++) {
-        Eigen::VectorXd vetorDados = matrizDados.row(i);
-        double previsao = this->pesos.dot(vetorDados) + this->vies;
-
-        if (previsao >= 0) {
-            resultados.push_back(1);
-        } else {
-            resultados.push_back(-1);
-        }
-    }
-    return resultados;
-};
-
-void SVC::getPesos() {
-    for (Eigen::Index i = 0; i < this->pesos.size(); i++) {
-        std::cout << "w" << i << ": " << this->pesos(i)<< "\n";
-    }
-};
-
-void SVC::getVies() {
-    std::cout << "vies: " << this->vies << "\n";
-};
+    // Viés
+    this->bias = -(this->model->rho[0]);
 
 
+    std::cout << "Modelo treinado com sucesso!" << std::endl;
+    std::cout << "Pesos w:\n" << this->pesos.transpose() << std::endl;
+    std::cout << "Bias b: " << bias << std::endl;
+
+    // Limpar memória
+    svm_free_and_destroy_model(&model);
+    delete[] x_space;
+    delete[] prob.x;
+}

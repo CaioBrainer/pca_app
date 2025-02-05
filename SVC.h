@@ -1,25 +1,20 @@
 //
-// Created by caiobrainer on 01/02/25.
+// Created by caiobrainer on 04/02/25.
 //
 
 #ifndef SVC_H
 #define SVC_H
 
-
+#include <svm.h>
 #include <Eigen/Dense>
 
 class SVC {
 public:
-    void treino(const Eigen::MatrixXd &matrizDados, const Eigen::VectorXd &vetorRotulos,
-        const double &valorRegularizacao, double taxaAprendizado=0.01);
-    std::vector<int> previsao(const Eigen::MatrixXd &matrizDados);
-    void getPesos();
-    void getVies();
+    void treinoSVC(const Eigen::MatrixXd &matrizAtributos, Eigen::VectorXd &vetorRotulos);
 private:
-    Eigen::VectorXd pesos {0};
-    Eigen::VectorXd regularizacao {};
-    double vies {0};
-    int iteracoes {};
+    svm_model *model {};
+    Eigen::VectorXd pesos{};
+    double bias{};
 };
 
 
