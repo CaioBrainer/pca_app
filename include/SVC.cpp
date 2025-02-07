@@ -19,10 +19,10 @@ void SVC::treinoSVC(const Eigen::MatrixXd &matrizAtributos, Eigen::VectorXd &vet
     struct svm_node* x_space = new svm_node[numAmostras * (numAtributos + 1)];
 
     prob.l = numAmostras;
-    prob.y = vetorRotulos.data(); // Usando os dados do Eigen
+    prob.y = vetorRotulos.data(); // Usando os data do Eigen
     prob.x = new svm_node*[numAmostras];
 
-    // Convertendo os dados do Eigen para o formato LIBSVM
+    // Convertendo os data do Eigen para o formato LIBSVM
     for (int i = 0; i < numAmostras; i++) {
         prob.x[i] = &x_space[i * (numAtributos + 1)];
         for (int j = 0; j < numAtributos; j++) {
@@ -80,7 +80,7 @@ void SVC::treinoSVC(const Eigen::MatrixXd &matrizAtributos, Eigen::VectorXd &vet
     std::cout << "Bias b: " << bias << std::endl;
 
     // Limpar memória
-    svm_free_and_destroy_model(&model);
+    svm_free_and_destroy_model(&this->model);
     delete[] x_space;
     delete[] prob.x;
 }

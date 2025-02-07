@@ -23,11 +23,11 @@ struct dadosTabulares {
 
     }
 
-    // Método para preencher os dados numéricos
+    // Método para preencher os data numéricos
     void inserirDados(const std::vector<std::vector<double>>& vetorVetores) {
         for (const auto &vetor: vetorVetores) {
             this->dadosNumericos.push_back(vetor); /* Mudar para std::move posteriormente,
-                                                da forma que está os dados estão sendo copiados*/
+                                                da forma que está os data estão sendo copiados*/
         }
     }
 };

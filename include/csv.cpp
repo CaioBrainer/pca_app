@@ -19,18 +19,7 @@ dadosTabulares csv::lerArquivo(const std::string &fileName) {
         std::cout << "Erro ao abrir o arquivo: " << caminho << "\n";
     }
 
-
-    // std::shared_ptr<int> ptr = std::make_shared<int>(42);
-
-    // auto cabecalho = std::make_shared<std::vector<std::string>>();
-    // auto dadosNumericos = std::make_shared<std::vector<std::vector<double>>>();
-    // std::vector<std::string> cabecalho;
-    // std::vector<std::vector<double>> dadosNumericos;
-    dadosTabulares dadosTabulares;
-    std::string linha;
-
-
-    /* O bloco de código abaixo funciona da seguinte forma:
+     /* O bloco de código abaixo funciona da seguinte forma:
      * O código verifica se há uma linha no arquivo (cabeçalho), e caso afirmativo
      * ele irá criar um objeto stringstream com a linha e instanciar uma string para o dado na coluna.
      * Após isso, o código irá entrar em loop, onde enquanto houver colunas no código,
@@ -38,6 +27,8 @@ dadosTabulares csv::lerArquivo(const std::string &fileName) {
      * dado coluna, que será inserida no vetor de strings definido no início da execução da função.
      */
 
+    dadosTabulares dadosTabulares;
+    std::string linha;
     if (std::getline(arquivo, linha)) {
         std::stringstream ss(linha);
         std::string dadoColuna;
@@ -139,7 +130,6 @@ void csv::salvarArquivo(const dadosTabulares &dadosTabulares) {
     std::cout << "Arquivo salvo com sucesso: " << nomeArquivo << ".csv\n";
 }
 
-// Overloading da função
 void csv::salvarArquivo(const dadosTabulares &dadosTabulares, const Eigen::MatrixXd &matrizPCA) {
     std::string nomeArquivo;
     std::cout << "Digite o nome do arquivo para salvar o resultado do PCA: ";
